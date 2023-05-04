@@ -3,6 +3,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const mongoose = require('mongoose') // 載入 mongoose
 const bodyParser = require('body-parser') // 引用 body-parser
+const methodOverride = require('method-override')
 
 // 加入這段 code, 僅在非正式環境時, 使用 dotenv
 if (process.env.NODE_ENV !== 'production') {
@@ -36,6 +37,7 @@ app.set('view engine', 'handlebars')
 app.use(express.static('public'))
 // 用 app.use 規定每一筆請求都需要透過 body-parser 進行前置處理
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
 
 // routes setting
 app.get('/', (req, res) => {
@@ -80,11 +82,19 @@ app.get('/restaurants/:restaurant_id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-app.post('/restaurants/:restaurant_id/edit', (req, res) => {
-  const id = req.params.restaurant_id
+app.put('/restaurants/:id', (req, res) => {
+  const id = req.params.id
   return Restaurant.findByIdAndUpdate(id, req.body)
     .then(() => res.redirect('/'))
     .catch(error => console.log(error))
+})
+
+// delete page
+app.delete("/restaurants/:id", (req, res) => {
+  const id = req.params.id
+  Restaurant.findByIdAndDelete(id)
+    .then(() => res.redirect("/"))
+    .catch(err => console.log(err))
 })
 
 // start and listen on the Express server
