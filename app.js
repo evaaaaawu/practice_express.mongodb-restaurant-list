@@ -27,7 +27,7 @@ db.once('open', () => {
 })
 
 const restaurantList = require('./restaurant.json')
-const Restaurant = require('./models/restaurant')
+const routes = require('./routes') // 引用路由器
 
 // setting template engine
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
@@ -38,64 +38,7 @@ app.use(express.static('public'))
 // 用 app.use 規定每一筆請求都需要透過 body-parser 進行前置處理
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
-
-// routes setting
-app.get('/', (req, res) => {
-  Restaurant.find()
-    .lean()
-    .then(restaurants => res.render('index', { restaurants }))
-    .catch(error => console.error(error))
-})
-
-app.get('/restaurants/:restaurant_id', (req, res) => {  
-  const id = req.params.id
-  return Restaurant.findById(id)
-    .lean()
-    .then((restaurant) => res.render('show', { restaurant }))
-    .catch(error => console.log(error))
-})
-
-app.get('/search', (req, res) => {
-  const keyword = req.query.keyword
-  const restaurants = restaurantList.results.filter(restaurant => {
-    return restaurant.name.toLowerCase().includes(keyword.toLowerCase())
-  })
-  res.render('index', { restaurants: restaurants, keyword: keyword })
-})
-
-app.get('/restaurants/new', (req, res) => {
-  return res.render('new')
-})
-
-app.post("/restaurants", (req, res) => {
-  Restaurant.create(req.body)
-    .then(() => res.redirect("/"))
-    .catch(err => console.log(err))
-})
-
-// edit page
-app.get('/restaurants/:restaurant_id/edit', (req, res) => {
-  const id = req.params.restaurant_id
-  Restaurant.findById(id)
-    .lean()
-    .then(restaurant => res.render('edit', { restaurant }))
-    .catch(error => console.log(error))
-})
-
-app.put('/restaurants/:id', (req, res) => {
-  const id = req.params.id
-  return Restaurant.findByIdAndUpdate(id, req.body)
-    .then(() => res.redirect('/'))
-    .catch(error => console.log(error))
-})
-
-// delete page
-app.delete("/restaurants/:id", (req, res) => {
-  const id = req.params.id
-  Restaurant.findByIdAndDelete(id)
-    .then(() => res.redirect("/"))
-    .catch(err => console.log(err))
-})
+app.use(routes) // 將 request 導入路由器
 
 // start and listen on the Express server
 app.listen(port, () => {
