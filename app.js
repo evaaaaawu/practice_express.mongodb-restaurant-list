@@ -12,6 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const restaurantList = require('./restaurant.json')
 const routes = require('./routes') // 引用路由器
+const usePassport = require('./config/passport') // 載入設定檔，要寫在 express-session 以後
 require('./config/mongoose')
 
 const app = express()
@@ -29,6 +30,7 @@ app.use(session({
 }))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+usePassport(app) // 呼叫 Passport 函式並傳入 app，這條要寫在路由之前
 app.use(routes) // 將 request 導入路由器
 
 // start and listen on the Express server
