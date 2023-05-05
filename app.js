@@ -31,6 +31,12 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 usePassport(app) // 呼叫 Passport 函式並傳入 app，這條要寫在路由之前
+app.use((req, res, next) => {
+  // 你可以在這裡 console.log(req.user) 等資訊來觀察
+  res.locals.isAuthenticated = req.isAuthenticated() //res.locals 是 express.js 幫我們開的一條捷徑，放在 res.locals 裡的資料，所有的 view 都可以存取
+  res.locals.user = req.user
+  next()
+})
 app.use(routes) // 將 request 導入路由器
 
 // start and listen on the Express server
