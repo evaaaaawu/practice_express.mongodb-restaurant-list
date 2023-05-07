@@ -11,7 +11,6 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-const restaurantList = require('./restaurant.json')
 const routes = require('./routes') // 引用路由器
 const usePassport = require('./config/passport') // 載入設定檔，要寫在 express-session 以後
 require('./config/mongoose')

@@ -9,7 +9,7 @@ router.get('/new', (req, res) => {
 
 router.post("/", (req, res) => {
   const userId = req.user._id
-  return Restaurant.create({...req.body, userId}) //(參考別人的)
+  return Restaurant.create({...req.body, userId}) //***
     .then(() => res.redirect("/"))
     .catch(err => console.log(err))
 })
@@ -38,7 +38,7 @@ router.put('/:id', (req, res) => {
   const userId = req.user._id
   const _id = req.params.id
   const data = req.body
-  return Restaurant.findOneAndUpdate({ _id, userId}, data) //(參考別人的)
+  return Restaurant.findOneAndUpdate({ _id, userId}, data) //***
     .then(() => res.redirect('/'))
     .catch(err => console.log(err))
 })
