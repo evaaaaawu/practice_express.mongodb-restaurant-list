@@ -18,7 +18,10 @@
               {{#if isAuthenticated}} {{user.name}}的 {{/if}}餐廳清單
             </a>
             {{#if isAuthenticated}}
-              <a href="/users/logout"><button class="btn btn-primary">Logout</button></a>
+              <div>
+                <a href="/restaurants/new"><button class="btn btn-primary">新增餐廳</button></a>
+                <a href="/users/logout"><button class="btn btn-primary">Logout</button></a>
+              </div>
             {{else}}
               <a href="/users/login"><button class="btn btn-primary">Login</button></a>
             {{/if}}
