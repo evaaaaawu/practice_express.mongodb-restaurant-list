@@ -6,20 +6,23 @@ const Restaurant = require('../../models/restaurant')
 
 // 定義首頁路由
 router.get('/', (req, res) => {
-  const userId = req.user._id  // 變數設定
-  Restaurant.find({ userId }) // 加入查詢條件
+  const keyword = (req.query.keyword) ? req.query.keyword.trim() : ''
+  const userId = req.user._id
+  Restaurant.find({ userId })
     .lean()
-    .sort({ _id: 'asc' }) // desc
-    .then(restaurants => res.render('index', { restaurants }))
-    .catch(err => console.log(err))
-})
+    .then(restaurants => {
+      const searchResult = restaurants.filter(restaurant => 
+        // restaurant.name.includes(keyword)
+        restaurant.name.toLowerCase().includes(keyword.toLowerCase())
+      )
 
-router.get('/search', (req, res) => {
-  const keyword = req.query.keyword
-  const restaurants = Restaurant.filter(restaurant => {
-    return restaurant.name.toLowerCase().includes(keyword.toLowerCase())
-  })
-  res.render('index', { restaurants: restaurants, keyword: keyword })
+      if (!keyword) {
+        res.render('index', {restaurants})
+      } else {
+        res.render('index', {restaurants: searchResult, keyword: keyword})
+      }
+    })
+    .catch(err => console.log(err))
 })
 
 // 匯出路由模組
